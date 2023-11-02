@@ -1,0 +1,53 @@
+$ ls
+$ cd /var/log
+$ sudo tail -n 50 syslog
+$ mkdir logs_backup
+$ cp syslog logs_backup/syslog_backup
+$ cat /etc/passwd
+$ grep "user" /etc/passwd
+$ who
+$ top
+$ touch new_file.txt
+$ mv new_file.txt /home/user/documents
+$ nano /etc/network/interfaces
+$ ping google.com
+$ ifconfig
+$ netstat -tuln
+$ ps -ef
+$ sudo apt-get install htop
+$ htop
+$ chmod 755 script.sh
+$ ./script.sh
+$ grep -R "error" /var/log
+$ find / -name "important_data.txt"
+$ tar -czvf data_backup.tar.gz /path/to/data
+$ scp data_backup.tar.gz remoteuser@remotehost:/path/to/destination/
+$ ssh remoteuser@remotehost
+$ sudo systemctl restart apache2
+$ history
+$ curl https://example.com
+$ wget https://example.com/file.zip
+$ unzip file.zip
+$ df -h
+$ du -sh /var
+$ sudo journalctl -xe
+$ cat /etc/ssh/sshd_config
+$ systemctl status ssh
+$ find /home/user -type f -size +10M
+$ grep -rn "TODO" /path/to/project
+$ ls -l /etc/cron.d
+$ crontab -e
+$ date
+$ ssh-keygen -t rsa -b 4096
+$ scp ~/.ssh/id_rsa.pub remoteuser@remotehost:~/.ssh/authorized_keys
+$ sudo useradd newuser
+$ sudo passwd newuser
+$ sudo visudo
+$ sudo usermod -aG sudo newuser
+$ sudo deluser olduser
+$ sudo ufw allow 22/tcp
+$ sudo ufw enable
+$ sudo ufw status
+$ sudo reboot
+$ history -c
+

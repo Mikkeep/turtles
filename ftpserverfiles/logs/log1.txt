@@ -1,0 +1,20 @@
+$ ls -l
+$ cd /home/april/documents
+$ touch file.txt
+$ cp file.txt backup/
+$ mv backup/file.txt archive/
+$ cat archive/file.txt
+$ nano notes.txt
+$ ps aux
+$ kill -9 1234
+$ su april
+$ september2024
+$ df -h
+$ scp local_file.txt remoteuser@remotehost:/path/to/destination/
+$ ssh remoteuser@remotehost
+$ sudo apt-get update
+$ sudo apt-get upgrade
+$ exit
+$ sudo reboot
+$ history -c
+
