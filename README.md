@@ -11,4 +11,4 @@ pip3 install ansible
 
 ## Deploy the Ansible playbook to install the needed packages and files
 
-
+ansible-playbook --connection=local build.playbook --become-password-file pass.txt
