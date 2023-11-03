@@ -1,33 +1,125 @@
---
-- name: Install Packages 
-  apt: name={{ item }} state=present update_cache=true
-  with_items:
-    - vsftpd
-    - php
-    - php-fpm
-    - php-mysql
-    - vsftpd
-    - unzip
-    - base64
+---
+
+- name: Install apt packages 
+  apt:
+    name:
+      - vsftpd
+      - php
+      - php-fpm
+      - php-mysql
+      - vsftpd
+      - unzip
+      - sqlite
+      - sqlite3
+      - apache2
+      - php-sqlite3
+      - php7.4-fpm
+    state: latest
+    update_cache: true
+
+- name: allow ftp-data
+  ufw:
+    rule: allow
+    port: '20'
+    proto: tcp
+
+- name: allow ftp
+  ufw:
+    rule: allow
+    port: '21'
+    proto: tcp
+
+- name: allow tcp 80
+  ufw:
+    rule: allow
+    port: '80'
+    proto: tcp
+
+- name: allow ssh
+  ufw:
+    rule: allow
+    port: '22'
+    name: OpenSSH
 
 - name: Enable ufw
-  command: systemctl start ufw ; ufw allow ftp-data; ufw allow ftp; ufw allow ssh; ufw status;  
+  ufw:
+    state: enabled
 
-- name: Create /var/ftp/public
-  command: mkdir -p /var/ftp/ ; mkdir -p /var/ftp/public ; sudo chown nobody:nogroup /var/ftp/public
+- name: Create /var/ftp
+  file:
+    path: /var/ftp
+    state: directory
+    owner: nobody
+    group: nogroup
 
-- name: Download files to var/ftp/public
- command: git clone https://github.com/Mikkeep/turtles.git; rm -rf web ansible README.md .gitignore .git; mv files /var/ftp/public/
+- name: Create /var/fpt/public
+  file:
+    path: /var/ftp/public
+    state: directory
+    owner: nobody
+    group: nogroup
+
+- name: Move files to var/ftp/public
+  copy:
+    src: /home/tester/files/
+    dest: /var/ftp/public/
 
 - name: Change vsftpd config file
-  command: mv /etc/vsftpd.conf /etc/vsftpd.conf.bak; mv vsftpd.conf /etc/vsftpd.conf
+  copy:
+    src: /home/tester/vsftpd.conf
+    dest: /etc/vsftpd.conf
 
 - name: Restart vsftpd
- command: systemctl restart vsftpd
+  command: systemctl restart vsftpd
 
-- name: Disable default pool
-  command: mv /etc/php-fpm.d/www.conf /etc/php-fpm.d/www.disabled creates=/etc/php-fpm.d/www.disabled
-  notify: restart php-fpm
+- name: Add sudoers file permission
+  lineinfile:
+    path: /etc/sudoers
+    state: present
+    regexp: '^%ADMIN ALL='
+    line: 'tester ALL = NOPASSWD: /usr/bin/base64'
+    validate: /usr/sbin/visudo -cf %s
 
-- name: Set SUDO right for base64
-  command: echo 'april ALL = NOPASSWD: /usr/bin/base64' | sudo EDITO R='tee -a' visudo 
+- name: Apache2 config
+  command: a2enmod proxy_fcgi setenvif
+
+- name: Apache2 php-fpm
+  command: a2enconf php7.4-fpm
+
+- name: Copy Apache2 conf
+  copy:
+    src: /home/tester/apache2/apache2.conf
+    dest: /etc/apache2/apache2.conf
+    owner: root
+    group: root
+
+- name: Copy apache2 default conf
+  copy:
+    src: /home/tester/apache2/000-default.conf
+    dest: /etc/apache2/sites-enabled/000-default.conf
+    owner: root
+    group: root
+
+- name: Copy index.html
+  copy:
+    src: /home/tester/web/index.html
+    dest: /var/www/html/
+    owner: www-data
+    group: www-data
+
+- name: Copy girl.jpg
+  copy:
+    src: /home/tester/web/girl.jpg
+    dest: /var/www/html/
+    owner: www-data
+    group: www-data
+
+- name: Copy ritedev
+  copy:
+    src: /home/tester/cms/ritedev
+    dest: /var/www/html/
+    owner: www-data
+    group: www-data
+
+- name: Apache2 restart
+  command: systemctl restart apache2
