@@ -45,6 +45,49 @@
   ufw:
     state: enabled
 
+- name: Create April user
+  user: name=april password=$1$SomeSalt$Lo/pgBrnXF2WF6jNKqBx1/ state=present
+
+- name: Create Leonardo user
+  user: name=leonardo password=$1$SomeSalt$8ZK/daQ7w07n98aKm51Zl. state=present
+
+- name: Remove password authentication from ssh
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    state: present
+    regexp: '^PasswordAuthentication yes'
+    line: 'PasswordAuthentication no'
+
+- name: Create .ssh for April
+  file:
+    path: /home/april/.ssh
+    state: directory
+    owner: april
+    group: april
+    mode: '0700'
+
+- name: Create .ssh for Leonardo
+  file:
+    path: /home/leonardo/.ssh
+    state: directory
+    owner: leonardo
+    group: leonardo
+    mode: '0700'
+
+- name: Pass authorized keys for April
+  copy:
+    src: /home/tester/ssh_files/april_authorised
+    dest: /home/april/.ssh/authorized_keys
+    owner: april
+    group: april
+
+- name: Pass authorized keys for Leonardo
+  copy:
+    src: /home/tester/ssh_files/leonardo_authorised
+    dest: /home/leonardo/.ssh/authorized_keys
+    owner: leonardo
+    group: leonardo
+
 - name: Create /var/ftp
   file:
     path: /var/ftp
