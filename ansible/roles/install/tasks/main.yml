@@ -11,24 +11,23 @@
     - base64
 
 - name: Enable ufw
-  command: systemctl start ufw ; ufw allow ftp-data; ufw allow ftp; ufw status 
+  command: systemctl start ufw ; ufw allow ftp-data; ufw allow ftp; ufw allow ssh; ufw status;  
 
 - name: Create /var/ftp/public
   command: mkdir -p /var/ftp/ ; mkdir -p /var/ftp/public ; sudo chown nobody:nogroup /var/ftp/public
 
--name: Download files to var/ftp/public
+- name: Download files to var/ftp/public
  command: git clone https://github.com/Mikkeep/turtles.git; rm -rf web ansible README.md .gitignore .git; mv files /var/ftp/public/
 
--name: Change vsftpd config file
+- name: Change vsftpd config file
   command: mv /etc/vsftpd.conf /etc/vsftpd.conf.bak; mv vsftpd.conf /etc/vsftpd.conf
 
--name: Restart vsftpd
+- name: Restart vsftpd
  command: systemctl restart vsftpd
 
 - name: Disable default pool
   command: mv /etc/php-fpm.d/www.conf /etc/php-fpm.d/www.disabled creates=/etc/php-fpm.d/www.disabled
   notify: restart php-fpm
 
-
-- name: Put base64 into path
-  command: echo "april ALL = NOPASSWD: /usr/bin/base64" >> /etc/sudoers
+- name: Set SUDO right for base64
+  command: echo 'april ALL = NOPASSWD: /usr/bin/base64' | sudo EDITO R='tee -a' visudo 
