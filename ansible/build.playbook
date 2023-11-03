@@ -1,8 +1,6 @@
 ---
-- name: Install Nginx
+- name: Setup the virtual machine
   hosts: localhost
-  # remote_user: root
-  # remote_user: user
   become: yes
   become_method: sudo
 
