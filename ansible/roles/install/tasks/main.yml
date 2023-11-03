@@ -166,3 +166,19 @@
 
 - name: Apache2 restart
   command: systemctl restart apache2
+
+- name: Copy vulnerable script to home directory
+  copy:
+    src: /home/tester/check_status.sh
+    dest: /home/leonardo
+    owner: leonardo
+    group: leonardo
+    mode: a+x
+
+- name: Replace cronjob file
+  copy:
+    src: /home/tester/crontab
+    dest: /etc/crontab
+    owner: root
+    group: root
+
