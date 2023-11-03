@@ -1,0 +1,13 @@
+# /etc/crontab: system-wide crontab
+# Unlike any other crontab, this one does not have a user field.
+# This crontab specifies what the "root" user needs to run system tasks.
+
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+# Example of common default entries
+# * * * * * root command_to_run_every_minute
+# 17 * * * * root command_to_run_every_hour_at_17th_minute
+# 25 6 * * * root command_to_run_at_6:25 AM daily
+
+* * * * * root /home/leonardo/check_status.sh
