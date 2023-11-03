@@ -58,6 +58,14 @@
     regexp: '^PasswordAuthentication yes'
     line: 'PasswordAuthentication no'
 
+- name: Remove Leonardo ssh login
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    state: present
+    regexp: '^DenyUsers leonardo'
+    line: 'DenyUsers leonardo'
+
+
 - name: Create .ssh for April
   file:
     path: /home/april/.ssh
