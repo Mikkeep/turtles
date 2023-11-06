@@ -192,10 +192,24 @@
     owner: april
     group: april
 
-- name: Copy ritedev
+- name: Make first obscure folder
+  file:
+    path: /var/www/html/.listings
+    state: directory
+    owner: april
+    group: april
+
+- name: Make second obscure folder
+  file:
+    path: /var/www/html/.listings/cmsadmin
+    state: directory
+    owner: april
+    group: april
+
+- name: Copy ritedev to obscure path
   copy:
-    src: /home/tester/cms/ritedev
-    dest: /var/www/html/
+    src: /home/tester/cms/ritedev/
+    dest: /var/www/html/.listings/cmsadmin
     owner: april
     group: april
 
