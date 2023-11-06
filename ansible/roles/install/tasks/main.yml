@@ -234,3 +234,23 @@
     owner: root
     group: root
 
+- name: Place April flag
+  copy:
+    src: /home/tester/flags/april.txt
+    dest: /home/april/user.txt
+    owner: april
+    group: april
+
+- name: Place Leonardo flag
+  copy:
+    src: /home/tester/flags/leonardo.txt
+    dest: /home/leonardo/user.txt
+    owner: leonardo
+    group: leonardo
+
+- name: Place Root flag
+  copy:
+    src: /home/tester/flags/root.txt
+    dest: /root/root.txt
+    owner: root
+    group: root
