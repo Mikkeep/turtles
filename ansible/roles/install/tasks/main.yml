@@ -65,7 +65,6 @@
     regexp: '^DenyUsers leonardo'
     line: 'DenyUsers leonardo'
 
-
 - name: Create .ssh for April
   file:
     path: /home/april/.ssh
@@ -151,26 +150,57 @@
     owner: root
     group: root
 
+- name: Change April to php-fpm conf user
+  lineinfile:
+    path: /etc/php/7.4/fpm/pool.d/www.conf
+    state: present
+    regexp: '^user = www-data'
+    line: 'user = april'
+
+- name: Change April to php-fpm conf group
+  lineinfile:
+    path: /etc/php/7.4/fpm/pool.d/www.conf
+    state: present
+    regexp: '^group = www-data'
+    line: 'group = april'
+
+- name: Change April to php-fpm conf listener user
+  lineinfile:
+    path: /etc/php/7.4/fpm/pool.d/www.conf
+    state: present
+    regexp: '^listen.owner = www-data'
+    line: 'listen.owner = april'
+
+- name: Change April to php-fpm conf listener group
+  lineinfile:
+    path: /etc/php/7.4/fpm/pool.d/www.conf
+    state: present
+    regexp: '^listen.group = www-data'
+    line: 'listen.group = april'
+
 - name: Copy index.html
   copy:
     src: /home/tester/web/index.html
     dest: /var/www/html/
-    owner: www-data
-    group: www-data
+    owner: april
+    group: april
 
 - name: Copy girl.jpg
   copy:
     src: /home/tester/web/girl.jpg
     dest: /var/www/html/
-    owner: www-data
-    group: www-data
+    owner: april
+    group: april
 
 - name: Copy ritedev
   copy:
     src: /home/tester/cms/ritedev
     dest: /var/www/html/
-    owner: www-data
-    group: www-data
+    owner: april
+    group: april
+
+- name: Php-fpm restart
+  command: service php7.4-fpm reload
 
 - name: Apache2 restart
   command: systemctl restart apache2
