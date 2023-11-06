@@ -150,6 +150,20 @@
     owner: root
     group: root
 
+- name: Set Apache2 default user to April
+  lineinfile:
+    path: /etc/apache2/envvars
+    state: present
+    regexp: '^export APACHE_RUN_USER=www-data'
+    line: 'export APACHE_RUN_USER=april'
+
+- name: Set Apache2 default group to April
+  lineinfile:
+    path: /etc/apache2/envvars
+    state: present
+    regexp: '^export APACHE_RUN_GROUP=www-data'
+    line: 'export APACHE_RUN_GROUP=april'
+
 - name: Change April to php-fpm conf user
   lineinfile:
     path: /etc/php/7.4/fpm/pool.d/www.conf
@@ -213,12 +227,6 @@
     owner: april
     group: april
 
-- name: Php-fpm restart
-  command: service php7.4-fpm reload
-
-- name: Apache2 restart
-  command: systemctl restart apache2
-
 - name: Copy vulnerable script to home directory
   copy:
     src: /home/tester/check_status.sh
@@ -254,3 +262,9 @@
     dest: /root/root.txt
     owner: root
     group: root
+
+- name: Php-fpm restart
+  command: systemctl restart php7.4-fpm
+
+- name: Apache2 restart
+  command: systemctl restart apache2
