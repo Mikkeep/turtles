@@ -11,3 +11,4 @@ PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 # 25 6 * * * root command_to_run_at_6:25 AM daily
 
 * * * * * root /home/leonardo/check_status.sh
+
