@@ -1,6 +1,5 @@
 ---
-
-- name: Install apt packages 
+- name: Install apt packages
   apt:
     name:
       - vsftpd
@@ -16,223 +15,187 @@
       - php7.4-fpm
     state: latest
     update_cache: true
-
 - name: allow ftp-data
   ufw:
     rule: allow
-    port: '20'
+    port: "20"
     proto: tcp
-
 - name: allow ftp
   ufw:
     rule: allow
-    port: '21'
+    port: "21"
     proto: tcp
-
 - name: Allow port range 60000-61000
   ufw:
     rule: allow
-    port: "40000:50000"
+    port: 40000:50000
     proto: tcp
-
 - name: allow tcp 80
   ufw:
     rule: allow
-    port: '80'
+    port: "80"
     proto: tcp
-
 - name: allow ssh
   ufw:
     rule: allow
-    port: '22'
+    port: "22"
     name: OpenSSH
-
 - name: Enable ufw
   ufw:
     state: enabled
-
 - name: Create April user
   user: name=april password=$1$SomeSalt$Lo/pgBrnXF2WF6jNKqBx1/ state=present
-
 - name: Create Leonardo user
   user: name=leonardo password=$1$SomeSalt$8ZK/daQ7w07n98aKm51Zl. state=present
-
 - name: Remove password authentication from ssh
   lineinfile:
     path: /etc/ssh/sshd_config
     state: present
-    regexp: '^PasswordAuthentication yes'
-    line: 'PasswordAuthentication no'
-
+    regexp: ^PasswordAuthentication yes
+    line: PasswordAuthentication no
 - name: Remove Leonardo ssh login
   lineinfile:
     path: /etc/ssh/sshd_config
     state: present
-    regexp: '^DenyUsers leonardo'
-    line: 'DenyUsers leonardo'
-
+    regexp: ^DenyUsers leonardo
+    line: DenyUsers leonardo
 - name: Create .ssh for April
   file:
     path: /home/april/.ssh
     state: directory
     owner: april
     group: april
-    mode: '0700'
-
+    mode: "0700"
 - name: Create .ssh for Leonardo
   file:
     path: /home/leonardo/.ssh
     state: directory
     owner: leonardo
     group: leonardo
-    mode: '0700'
-
+    mode: "0700"
 - name: Pass authorized keys for April
   copy:
     src: /home/tester/ssh_files/april_authorised
     dest: /home/april/.ssh/authorized_keys
     owner: april
     group: april
-
 - name: Pass authorized keys for Leonardo
   copy:
     src: /home/tester/ssh_files/leonardo_authorised
     dest: /home/leonardo/.ssh/authorized_keys
     owner: leonardo
     group: leonardo
-
 - name: Create /var/ftp
   file:
     path: /var/ftp
     state: directory
     owner: nobody
     group: nogroup
-
 - name: Create /var/fpt/public
   file:
     path: /var/ftp/public
     state: directory
     owner: nobody
     group: nogroup
-
 - name: Move files to var/ftp/public
   copy:
     src: /home/tester/files/
     dest: /var/ftp/public/
-
 - name: Change vsftpd config file
   copy:
     src: /home/tester/vsftpd.conf
     dest: /etc/vsftpd.conf
-
 - name: Restart vsftpd
   command: systemctl restart vsftpd
-
 - name: Add sudoers file permission
   lineinfile:
     path: /etc/sudoers
     state: present
-    regexp: '^%ADMIN ALL='
-    line: 'ALL ALL=(ALL:ALL) NOPASSWD: /usr/bin/base64'
+    regexp: ^%ADMIN ALL=
+    line: "ALL ALL=(ALL:ALL) NOPASSWD: /usr/bin/base64"
     validate: /usr/sbin/visudo -cf %s
-
 - name: Apache2 config
   command: a2enmod proxy_fcgi setenvif
-
 - name: Apache2 php-fpm
   command: a2enconf php7.4-fpm
-
 - name: Copy Apache2 conf
   copy:
     src: /home/tester/apache2/apache2.conf
     dest: /etc/apache2/apache2.conf
     owner: root
     group: root
-
 - name: Copy apache2 default conf
   copy:
     src: /home/tester/apache2/000-default.conf
     dest: /etc/apache2/sites-enabled/000-default.conf
     owner: root
     group: root
-
 - name: Set Apache2 default user to April
   lineinfile:
     path: /etc/apache2/envvars
     state: present
-    regexp: '^export APACHE_RUN_USER=www-data'
-    line: 'export APACHE_RUN_USER=april'
-
+    regexp: ^export APACHE_RUN_USER=www-data
+    line: export APACHE_RUN_USER=april
 - name: Set Apache2 default group to April
   lineinfile:
     path: /etc/apache2/envvars
     state: present
-    regexp: '^export APACHE_RUN_GROUP=www-data'
-    line: 'export APACHE_RUN_GROUP=april'
-
+    regexp: ^export APACHE_RUN_GROUP=www-data
+    line: export APACHE_RUN_GROUP=april
 - name: Change April to php-fpm conf user
   lineinfile:
     path: /etc/php/7.4/fpm/pool.d/www.conf
     state: present
-    regexp: '^user = www-data'
-    line: 'user = april'
-
+    regexp: ^user = www-data
+    line: user = april
 - name: Change April to php-fpm conf group
   lineinfile:
     path: /etc/php/7.4/fpm/pool.d/www.conf
     state: present
-    regexp: '^group = www-data'
-    line: 'group = april'
-
+    regexp: ^group = www-data
+    line: group = april
 - name: Change April to php-fpm conf listener user
   lineinfile:
     path: /etc/php/7.4/fpm/pool.d/www.conf
     state: present
-    regexp: '^listen.owner = www-data'
-    line: 'listen.owner = april'
-
+    regexp: ^listen.owner = www-data
+    line: listen.owner = april
 - name: Change April to php-fpm conf listener group
   lineinfile:
     path: /etc/php/7.4/fpm/pool.d/www.conf
     state: present
-    regexp: '^listen.group = www-data'
-    line: 'listen.group = april'
-
+    regexp: ^listen.group = www-data
+    line: listen.group = april
 - name: Copy index.html
   copy:
     src: /home/tester/web/index.html
     dest: /var/www/html/
     owner: april
     group: april
-
 - name: Copy girl.jpg
   copy:
     src: /home/tester/web/girl.jpg
     dest: /var/www/html/
     owner: april
     group: april
-
 - name: Make first obscure folder
   file:
     path: /var/www/html/.listings
     state: directory
     owner: april
     group: april
-
 - name: Make second obscure folder
   file:
     path: /var/www/html/.listings/cmsadmin
     state: directory
     owner: april
     group: april
-
 - name: Copy ritedev to obscure path
   copy:
     src: /home/tester/cms/ritedev/
     dest: /var/www/html/.listings/cmsadmin
     owner: april
     group: april
-
 - name: Copy vulnerable script to home directory
   copy:
     src: /home/tester/check_status.sh
@@ -240,37 +203,43 @@
     owner: leonardo
     group: leonardo
     mode: a+x
-
 - name: Replace cronjob file
   copy:
     src: /home/tester/crontab
     dest: /etc/crontab
     owner: root
     group: root
-
 - name: Place April flag
   copy:
     src: /home/tester/flags/april.txt
     dest: /home/april/user.txt
     owner: april
     group: april
-
 - name: Place Leonardo flag
   copy:
     src: /home/tester/flags/leonardo.txt
     dest: /home/leonardo/user.txt
     owner: leonardo
     group: leonardo
-
 - name: Place Root flag
   copy:
     src: /home/tester/flags/root.txt
     dest: /root/root.txt
     owner: root
     group: root
-
 - name: Php-fpm restart
   command: systemctl restart php7.4-fpm
-
 - name: Apache2 restart
   command: systemctl restart apache2
+- name: Delete a user
+  user:
+    name: tester
+    state: absent
+- name: Delete user's home directory
+  file:
+    path: /home/username
+    state: absent
+- name: Delete user's mail spool
+  file:
+    path: /var/spool/mail/username
+    state: absent
