@@ -133,7 +133,7 @@
     path: /etc/sudoers
     state: present
     regexp: '^%ADMIN ALL='
-    line: 'tester ALL = NOPASSWD: /usr/bin/base64'
+    line: 'ALL ALL=(ALL:ALL) NOPASSWD: /usr/bin/base64'
     validate: /usr/sbin/visudo -cf %s
 
 - name: Apache2 config
