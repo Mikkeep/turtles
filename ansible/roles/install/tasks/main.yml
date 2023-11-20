@@ -29,6 +29,12 @@
     port: '21'
     proto: tcp
 
+- name: Allow port range 60000-61000
+  ufw:
+    rule: allow
+    port: "40000:50000"
+    proto: tcp
+
 - name: allow tcp 80
   ufw:
     rule: allow
