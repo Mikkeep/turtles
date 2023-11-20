@@ -231,15 +231,3 @@
   command: systemctl restart php7.4-fpm
 - name: Apache2 restart
   command: systemctl restart apache2
-- name: Delete a user
-  user:
-    name: tester
-    state: absent
-- name: Delete user's home directory
-  file:
-    path: /home/username
-    state: absent
-- name: Delete user's mail spool
-  file:
-    path: /var/spool/mail/username
-    state: absent
