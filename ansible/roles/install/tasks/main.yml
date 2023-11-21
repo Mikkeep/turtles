@@ -85,6 +85,20 @@
     dest: /home/leonardo/.ssh/authorized_keys
     owner: leonardo
     group: leonardo
+- name: Change April home directory permissions
+  file:
+    path: /home/april
+    recurse: yes
+    owner: april
+    group: april
+    mode: '0700'
+- name: Change Leonardo home directory permissions
+  file:
+    path: /home/leonardo
+    recurse: yes
+    owner: leonardo
+    group: leonardo
+    mode: '0700'
 - name: Create /var/ftp
   file:
     path: /var/ftp
